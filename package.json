@@ -3,12 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "node src/main.js",
+    "start": "node server.js",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "express": "^4.16.4",
     "lodash": "^4.17.11",
     "vue": "^2.5.21",
     "vue-highlight-text": "^1.6.2",
