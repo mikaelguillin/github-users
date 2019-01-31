@@ -55,11 +55,9 @@ export default {
 
   methods: {
     fetchUsers: function () {
-      var apiURL = `https://api.github.com/search/users?q=${this.user} in:login type:user&per_page=4`
-      var xhr = new XMLHttpRequest()
-      var self = this
-
-      console.log(process.env)
+      const apiURL = `https://api.github.com/search/users?q=${this.user} in:login type:user&per_page=4`
+      const xhr = new XMLHttpRequest()
+      const self = this
 
       if(this.selected.value) {
         apiURL += `&sort=${this.selected.value}`

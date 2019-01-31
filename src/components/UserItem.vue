@@ -37,9 +37,9 @@
 
 	  methods: {
 	  	fetchUserDetails: function () {
-	      var apiURL = this.user.url
-	      var xhr = new XMLHttpRequest()
-	      var self = this
+	      const apiURL = this.user.url
+	      const xhr = new XMLHttpRequest()
+	      const self = this
 
 	      xhr.open('GET', apiURL)
 	      xhr.setRequestHeader('Authorization', `token ${process.env.VUE_APP_TOKEN}`)
@@ -49,9 +49,9 @@
 	      xhr.send()
 	    },
 	    fetchFirstFollower: function () {
-	      var apiURL = this.user.followers_url
-	      var xhr = new XMLHttpRequest()
-	      var self = this
+	      const apiURL = this.user.followers_url
+	      const xhr = new XMLHttpRequest()
+	      const self = this
 
 	      xhr.open('GET', apiURL)
 	      xhr.setRequestHeader('Authorization', `token ${process.env.VUE_APP_TOKEN}`)
