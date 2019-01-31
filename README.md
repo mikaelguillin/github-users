@@ -1,29 +1,36 @@
 # github-users
 
-## Project setup
+## Installer le projet
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+Créer un fichier .env.local avec une variable d'environnement `VUE_APP_TOKEN=<token>` contenant un token pour l'authentification à l'API
+
+### Lancer le serveur de développement
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
+### Compiler pour la production
 ```
 npm run build
 ```
 
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
+### Lancer eslint
 ```
 npm run lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### Dépendances utilisées
+* vue-select pour le dropdown des filtres
+* vue-highlight-text pour mettre la chaîne de caractères recherchée en surbrillance sur les logins
+* @beyonk/google-fonts-webpack-plugin pour mettre en place facilement des google fonts
+
+### Pistes d'amélioration
+* Factorisation des fonctions d'appel vers l'API github
+* Mise en place de tests unitaires
+* Déploiement automatique vers un serveur distant
+
+### Temps effectif passé sur le projet
+2,5 jours
