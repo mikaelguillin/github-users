@@ -1,23 +1,30 @@
 <template>
-  <div class="userSearch">
+  <section class="userSearch">
     <input type="text" placeholder="Joseph" v-model="user" />
 
-    <div class="filters" v-show="users.items && users.items.length > 1">
-      <div class="filters__label">Trier par :</div>
-      <v-select v-model="selected" :options="[{label:'nombre de repositories',value:'repositories'},{label:'nombre de followers', value: 'followers'}, {label:'score', value:'score'}]">
-      </v-select>
-    </div>
+    <template v-if="errors.length">
+      <div class="appError">
+        <div class="msgApp msgApp--error">Aïe, il semblerait qu'il y ait une erreur technique</div>
+        <button class="btn btn--refresh" type="button" v-on:click="refresh()">Rafraîchir l'écran</button>
+      </div>
+    </template>
 
-    <div class="msgApp" v-if="!user">Entrez le nom d'un profil Github</div>
+    <template v-else>
+      <div class="filters" v-if="user && users && users.length > 1">
+        <div class="filters__label">Trier par</div>
+        <v-select v-model="filter" :options="[{label:'nombre de repositories',value:'repositories'},{label:'nombre de followers', value: 'followers'}, {label:'score', value:'score'}]">
+        </v-select>
+      </div>
 
-    <ul class="usersList" v-else-if="users.items && users.items.length">
-      <li is="UserItem" v-for="currentUser in users.items" :key="currentUser.id" :user="currentUser" :userModel="user"></li>
-    </ul>
+      <div class="msgApp" v-if="!user">Entrez le nom d'un profil Github</div>
 
-    <div class="msgApp msgApp--noResults" v-else>Aucun résultat ne correspond à votre recherche</div>
+      <ul class="usersList" v-else-if="users && users.length">
+        <li is="UserItem" v-for="currentUser in users" :key="currentUser.id" :user="currentUser" :userModel="user"></li>
+      </ul>
 
-    <!-- <div>Aïe, il semblerait qu'il y ait une erreur technique</div> -->
-  </div>
+      <div class="msgApp msgApp--noResults" v-else>Aucun résultat ne correspond à votre recherche</div>
+    </template>
+  </section>
 </template>
 
 <script>
@@ -33,8 +40,9 @@ export default {
   data: function () {
     return {
       user: '',
-      users: {},
-      selected: []
+      users: [],
+      filter: [],
+      errors: []
     }
   },
 
@@ -44,10 +52,9 @@ export default {
 
   watch: {
     user: function (newUser, oldUser) {
-      // this.answer = 'Waiting for you to stop typing...'
         this.debouncedGetUser()
     },
-    selected: function(newFilter, oldFilter) {
+    filter: function(newFilter, oldFilter) {
       if(this.user)
         this.debouncedGetUser()
     }
@@ -55,20 +62,28 @@ export default {
 
   methods: {
     fetchUsers: function () {
-      const apiURL = `https://api.github.com/search/users?q=${this.user} in:login type:user&per_page=4`
+      let apiURL = `https://api.github.com/search/users?q=${this.user} in:login type:user&per_page=4`
       const xhr = new XMLHttpRequest()
       const self = this
 
-      if(this.selected.value) {
-        apiURL += `&sort=${this.selected.value}`
+      if(this.filter.value) {
+        apiURL += `&sort=${this.filter.value}`
       }
 
       xhr.open('GET', apiURL)
       xhr.setRequestHeader('Authorization', `token ${process.env.VUE_APP_TOKEN}`)
       xhr.onload = function () {
-        self.users = JSON.parse(xhr.responseText)
+        const json = JSON.parse(xhr.responseText)
+        self.users = json.items
+
+        if(json.errors) {
+          self.errors = json.errors
+        }
       }
       xhr.send()
+    },
+    refresh: function() {
+      location.reload()
     }
   }
 }
@@ -88,8 +103,16 @@ export default {
     border-radius: 6px;
     border: 0;
     box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.2);
-    padding: 15px 10px 15px 50px;
+    padding: 20px 10px 20px 50px;
     width: 100%;
+    transition: box-shadow .3s;
+    font-size: 1.4rem;
+
+    &:focus
+    {
+      box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.4);
+      outline: 0;
+    }
   }
 }
 
@@ -106,12 +129,15 @@ export default {
   text-align: center;
   margin: 40px 0 0;
 
-  &--noResults:before
+  &:before
   {
     display: block;
-    content: url('../assets/icons/telescope.svg');
     margin: 0 0 10px;
   }
+
+  &--noResults:before { content: url('../assets/icons/telescope.svg'); }
+
+  &--error:before { content: url('../assets/icons/buoy.svg'); }
 }
 
 .filters
@@ -124,5 +150,29 @@ export default {
 .filters__label
 {
   margin: 0 0 0 auto;
+}
+
+.btn--refresh
+{
+  background: #ff2674;
+  border-radius: 6px;
+  border: 0;
+  color: #fff;
+
+  &:hover,
+  &:focus
+  {
+    background: darken(#ff2674, 15%);
+  }
+}
+
+.appError
+{
+  text-align: center;
+
+  .btn--refresh
+  {
+    margin: 20px 0 0;
+  }
 }
 </style>
