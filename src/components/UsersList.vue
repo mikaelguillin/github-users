@@ -52,11 +52,10 @@ export default {
 
   watch: {
     user: function (newUser, oldUser) {
-        this.debouncedGetUser()
+      this.debouncedGetUser()
     },
-    filter: function(newFilter, oldFilter) {
-      if(this.user)
-        this.debouncedGetUser()
+    filter: function (newFilter, oldFilter) {
+      if (this.user) { this.debouncedGetUser() }
     }
   },
 
@@ -66,7 +65,7 @@ export default {
       const xhr = new XMLHttpRequest()
       const self = this
 
-      if(this.filter.value) {
+      if (this.filter.value) {
         apiURL += `&sort=${this.filter.value}`
       }
 
@@ -76,13 +75,13 @@ export default {
         const json = JSON.parse(xhr.responseText)
         self.users = json.items
 
-        if(json.errors) {
+        if (json.errors) {
           self.errors = json.errors
         }
       }
       xhr.send()
     },
-    refresh: function() {
+    refresh: function () {
       location.reload()
     }
   }

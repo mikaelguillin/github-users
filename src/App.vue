@@ -5,14 +5,14 @@
 </template>
 
 <script>
-  import UsersList from './components/UsersList.vue'
+import UsersList from './components/UsersList.vue'
 
-  export default {
-    name: 'app',
-    components: {
-      UsersList
-    }
+export default {
+  name: 'app',
+  components: {
+    UsersList
   }
+}
 </script>
 
 <style lang="scss">
@@ -100,7 +100,7 @@ body
     > .highlight > a
     {
       background: rgba(72, 72, 72, .1);
-      color: inherit; 
+      color: inherit;
     }
   }
 
