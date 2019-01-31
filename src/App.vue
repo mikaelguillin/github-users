@@ -37,7 +37,14 @@ body
   line-height: 1.2;
 }
 
-.UsersList
+.btn
+{
+  cursor: pointer;
+  padding: 10px 15px;
+  transition: background .3s;
+}
+
+.usersList
 {
   .highlighted
   {
@@ -53,7 +60,31 @@ body
     border: 0;
 
     .clear { display: none; }
-    .form-control { display: none; }
+
+    .form-control
+    {
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .vs__actions
+    {
+      align-self: flex-end;
+      padding-bottom: 7px;
+    }
+
+    .open-indicator
+    {
+      &:before
+      {
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 8px 8px 0 8px;
+        border-color: #2c3e50 transparent transparent;
+        transform: rotate(0deg);
+      }
+    }
   }
 
   .dropdown-menu
@@ -71,8 +102,22 @@ body
       background: rgba(72, 72, 72, .1);
       color: inherit; 
     }
+  }
 
-    .selected-tag { display: none; }
+  &.open
+  {
+    .dropdown-toggle
+    {
+      .selected-tag { display: none; }
+
+      .open-indicator
+      {
+        &:before
+        {
+          transform: rotate(180deg);
+        }
+      }
+    }
   }
 }
 </style>

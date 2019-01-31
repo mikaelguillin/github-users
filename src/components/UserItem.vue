@@ -1,22 +1,30 @@
 <template>
-	<li class="userItem">
-		<a :href="user.html_url">
-	    	<img class="userItem__avatar" :src="user.avatar_url" :alt="'avatar de ' + user.login" />
-	    </a>
+	<li>
+		<article class="userItem">
+			<a :href="user.html_url">
+		    	<img class="userItem__avatar" :src="user.avatar_url" :alt="'avatar de ' + user.login" />
+		    </a>
 
-	    <div class="userItem__details">
-	      <a :href="user.html_url" class="userItem__login" v-highlight="{keyword: userModel, sensitive: false, overWriteStyle: {color: 'inherit'}}">{{ user.login }}</a>
+		    <div class="userItem__details">
+		      <a :href="user.html_url" class="userItem__login" v-highlight="{keyword: userModel, sensitive: false, overWriteStyle: {color: 'inherit'}}">
+		      	{{ user.login }}
+		      </a>
 
-	      <div class="userItem__stats">
-	      	<span class="userItem__score">{{ Math.round(user.score) }}</span>
-	      	<span class="userItem__repos" v-if="details.public_repos"> - {{ details.public_repos }} repositories</span>
-	      </div>
+		      <div class="userItem__stats">
+		      	<span class="userItem__score">{{ Math.round(user.score) }}</span>
+		      	<span class="userItem__repos" v-if="details.public_repos"> - {{ details.public_repos }} repositories</span>
+		      </div>
 
-	      <div class="userItem__followers" v-if="details.followers">
-	      	Suivi par : <img class="userItem__followerAvatar" :src="firstFollower.avatar_url" :alt="'avatar de ' + firstFollower.login" /> {{ firstFollower.login }} {{ details.followers > 1 ? `+ ${details.followers - 1}` : '' }}
-	      </div>
-	    </div>
-    </li>
+		      <div class="userItem__followers" v-if="details.followers">
+		      	Suivi par :
+		      	<img class="userItem__firstFollowerAvatar" :src="firstFollower.avatar_url" :alt="'avatar de ' + firstFollower.login" />
+		      	<span class="userItem__firstFollower">
+		      		{{ firstFollower.login }} {{ details.followers > 1 ? `+ ${details.followers - 1}` : '' }}
+		      	</span>
+		      </div>
+		    </div>
+	    </article>
+	</li>
 </template>
 
 <script>
@@ -84,7 +92,8 @@
 		  color: inherit;
 		}
 
-		&__stats { margin: .5em 0; }
+		&__stats,
+		&__followers { font-size: .9em; }
 
 		&__score
 		{
@@ -99,7 +108,7 @@
 		&__followers { display: flex; }
 
 		&__avatar,
-		&__followerAvatar
+		&__firstFollowerAvatar
 		{
 			border-radius: 50%;
 			overflow: hidden;
@@ -108,17 +117,20 @@
 
 		&__avatar
 		{
+			display: block;
 			height: 70px;
-		  width: 70px;
-		  margin: 0 10px 0 0;
-		  white-space: nowrap;
+		  	width: 70px;
+		  	margin: 0 10px 0 0;
+		  	white-space: nowrap;
 		}
 
-		&__followerAvatar
+		&__firstFollowerAvatar
 		{
 			height: 20px;
 			width: 20px;
 			margin: 0 5px;
 		}
+
+		&__firstFollower { font-weight: 600; }
 	}
 </style>
