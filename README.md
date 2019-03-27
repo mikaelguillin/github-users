@@ -31,6 +31,3 @@ npm run lint
 * Factorisation des fonctions d'appel vers l'API github
 * Mise en place de tests unitaires
 * Déploiement automatique vers un serveur distant
-
-### Temps effectif passé sur le projet
-2,5 jours
