@@ -33,19 +33,17 @@ export default {
   props: ['user', 'userModel'],
   data: function () {
     return {
-      firstFollower: {},
-      details: {}
+      details: [],
+      firstFollower: ''
     }
   },
-
   created: function () {
-    this.fetchUserDetails()
-    this.fetchFirstFollower()
+    this.fetchUserDetails(this.user)
+    this.fetchFirstFollower(this.user)
   },
-
   methods: {
-    fetchUserDetails: function () {
-      const apiURL = this.user.url
+    fetchUserDetails: function (user) {
+      const apiURL = user.url
       const xhr = new XMLHttpRequest()
       const self = this
 
@@ -56,8 +54,8 @@ export default {
       }
       xhr.send()
     },
-    fetchFirstFollower: function () {
-      const apiURL = this.user.followers_url
+    fetchFirstFollower: function (user) {
+      const apiURL = user.followers_url
       const xhr = new XMLHttpRequest()
       const self = this
 
@@ -68,7 +66,7 @@ export default {
         self.firstFollower = json[0] || {}
       }
       xhr.send()
-    }
+    },
   }
 }
 </script>

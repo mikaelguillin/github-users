@@ -1,16 +1,80 @@
 <template>
   <div id="app">
-    <UsersList/>
+    <section class="userSearch">
+      <input type="text" placeholder="Joseph" v-model="user" />
+
+      <ErrorView v-if="errors.length" />
+
+      <template v-else>
+        <Dropdown v-if="user && users.length > 1" v-model="filter" :options="[
+          {label: 'nombre de repositories', value: 'repositories'},
+          {label: 'nombre de followers', value: 'followers'},
+          {label: 'score', value: 'score'}]"
+        />
+
+        <div class="msgApp" v-if="!user">Entrez le nom d'un profil Github</div>
+
+        <UsersList v-else-if="users && users.length" :users="users" :userModel="user" />
+
+        <div class="msgApp msgApp--noResults" v-else>Aucun résultat ne correspond à votre recherche</div>
+      </template>
+    </section>
   </div>
 </template>
 
 <script>
+import Dropdown from './components/Dropdown.vue'
 import UsersList from './components/UsersList.vue'
+import ErrorView from './components/ErrorView.vue'
 
 export default {
   name: 'app',
   components: {
-    UsersList
+    Dropdown,
+    UsersList,
+    ErrorView
+  },
+  data: function () {
+    return {
+      users: [],
+      user: '',
+      filter: [],
+      errors: []
+    }
+  },
+  created: function () {
+    this.debouncedGetUser = this._.debounce(this.fetchUsers, 500)
+  },
+  watch: {
+    user: function (newUser, oldUser) {
+      this.debouncedGetUser()
+    },
+    filter: function (newFilter, oldFilter) {
+      if (this.user) { this.debouncedGetUser() }
+    }
+  },
+  methods: {
+    fetchUsers: function () {
+      let apiURL = `https://api.github.com/search/users?q=${this.user} in:login type:user&per_page=4`
+      const xhr = new XMLHttpRequest()
+      const self = this
+
+      if (this.filter.value) {
+        apiURL += `&sort=${this.filter.value}`
+      }
+
+      xhr.open('GET', apiURL)
+      xhr.setRequestHeader('Authorization', `token ${process.env.VUE_APP_TOKEN}`)
+      xhr.onload = function () {
+        const json = JSON.parse(xhr.responseText)
+        self.users = json.items
+
+        if (json.errors) {
+          self.errors = json.errors
+        }
+      }
+      xhr.send()
+    }
   }
 }
 </script>
@@ -42,6 +106,31 @@ body
   cursor: pointer;
   padding: 10px 15px;
   transition: background .3s;
+}
+
+.userSearch
+{
+  margin: 0 auto;
+  max-width: 670px;
+  padding: 0 15px;
+
+  input[type="text"]
+  {
+    background: #fff url('assets/icons/lens.svg') 10px 50% no-repeat;
+    border-radius: 6px;
+    border: 0;
+    box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.2);
+    padding: 20px 10px 20px 50px;
+    width: 100%;
+    transition: box-shadow .3s;
+    font-size: 1.4rem;
+
+    &:focus
+    {
+      box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.4);
+      outline: 0;
+    }
+  }
 }
 
 .usersList
@@ -118,6 +207,38 @@ body
         }
       }
     }
+  }
+}
+
+.msgApp
+{
+  font-size: 2rem;
+  font-weight: 600;
+  text-align: center;
+  margin: 40px 0 0;
+
+  &:before
+  {
+    display: block;
+    margin: 0 0 10px;
+  }
+
+  &--noResults:before { content: url('assets/icons/telescope.svg'); }
+
+  &--error:before { content: url('assets/icons/buoy.svg'); }
+}
+
+.btn--refresh
+{
+  background: #ff2674;
+  border-radius: 6px;
+  border: 0;
+  color: #fff;
+
+  &:hover,
+  &:focus
+  {
+    background: darken(#ff2674, 15%);
   }
 }
 </style>
