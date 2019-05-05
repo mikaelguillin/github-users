@@ -28,6 +28,8 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   name: 'UserItem',
   props: ['user', 'userModel'],
@@ -44,29 +46,26 @@ export default {
   methods: {
     fetchUserDetails: function (user) {
       const apiURL = user.url
-      const xhr = new XMLHttpRequest()
       const self = this
 
-      xhr.open('GET', apiURL)
-      xhr.setRequestHeader('Authorization', `token ${process.env.VUE_APP_TOKEN}`)
-      xhr.onload = function () {
-        self.details = JSON.parse(xhr.responseText)
-      }
-      xhr.send()
+      axios({
+        url: apiURL,
+        headers: {'Authorization': `token ${process.env.VUE_APP_TOKEN}`}
+      }).then(function (response) {
+        self.details = response.data
+      })
     },
     fetchFirstFollower: function (user) {
       const apiURL = user.followers_url
-      const xhr = new XMLHttpRequest()
       const self = this
 
-      xhr.open('GET', apiURL)
-      xhr.setRequestHeader('Authorization', `token ${process.env.VUE_APP_TOKEN}`)
-      xhr.onload = function () {
-        const json = JSON.parse(xhr.responseText)
-        self.firstFollower = json[0] || {}
-      }
-      xhr.send()
-    },
+      axios({
+        url: apiURL,
+        headers: {'Authorization': `token ${process.env.VUE_APP_TOKEN}`}
+      }).then(function (response) {
+        self.firstFollower = response.data[0] || {}
+      })
+    }
   }
 }
 </script>

@@ -3,14 +3,10 @@
     <section class="userSearch">
       <input type="text" placeholder="Joseph" v-model="user" />
 
-      <ErrorView v-if="errors.length" />
+      <ErrorView v-if="error" />
 
       <template v-else>
-        <Dropdown v-if="user && users.length > 1" v-model="filter" :options="[
-          {label: 'nombre de repositories', value: 'repositories'},
-          {label: 'nombre de followers', value: 'followers'},
-          {label: 'score', value: 'score'}]"
-        />
+        <Dropdown v-if="user && users.length > 1" v-model="filter" :options="dropdownOptions" />
 
         <div class="msgApp" v-if="!user">Entrez le nom d'un profil Github</div>
 
@@ -23,6 +19,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import Dropdown from './components/Dropdown.vue'
 import UsersList from './components/UsersList.vue'
 import ErrorView from './components/ErrorView.vue'
@@ -39,7 +36,21 @@ export default {
       users: [],
       user: '',
       filter: [],
-      errors: []
+      error: false,
+      dropdownOptions: [
+        {
+          label: 'nombre de repositories',
+          value: 'repositories'
+        },
+        {
+          label: 'nombre de followers',
+          value: 'followers'
+        },
+        {
+          label: 'score',
+          value: 'score'
+        }
+      ]
     }
   },
   created: function () {
@@ -56,24 +67,20 @@ export default {
   methods: {
     fetchUsers: function () {
       let apiURL = `https://api.github.com/search/users?q=${this.user} in:login type:user&per_page=4`
-      const xhr = new XMLHttpRequest()
       const self = this
 
       if (this.filter.value) {
         apiURL += `&sort=${this.filter.value}`
       }
 
-      xhr.open('GET', apiURL)
-      xhr.setRequestHeader('Authorization', `token ${process.env.VUE_APP_TOKEN}`)
-      xhr.onload = function () {
-        const json = JSON.parse(xhr.responseText)
-        self.users = json.items
-
-        if (json.errors) {
-          self.errors = json.errors
-        }
-      }
-      xhr.send()
+      axios({
+        url: apiURL,
+        headers: {'Authorization': `token ${process.env.VUE_APP_TOKEN}`}
+      }).then(function (response) {
+        self.users = response.data.items
+      }).catch(function (error) {
+        self.error = true
+      })
     }
   }
 }
